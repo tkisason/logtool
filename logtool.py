@@ -64,10 +64,18 @@ def return_ips(log):
         if not ips.has_key(i):
             ips[i] = 0
         ips[i] = ips[i] + 1
-    ips.__delitem__("")
-    ips.__delitem__("127.0.0.1")
-    ips.__delitem__("0.0.0.0")
-    
+    try:
+        ips.__delitem__("")
+    except:
+        pass
+    try:
+        ips.__delitem__("127.0.0.1")
+    except:
+        pass
+    try:
+        ips.__delitem__("0.0.0.0")
+    except:
+        pass
     return ips
 
 
