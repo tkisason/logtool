@@ -1,0 +1,11 @@
+logtool, a tool for finding interesting patterns in authpriv files.
+
+Find all users that accessed your server,
+Find ok/nok logins from ip's and usernames,
+Correlate ok/nok logins with ips/hostnames/usernames
+
+As usually, an interface exists for common tasks, there are more cool things in source.
+
+Written by tonimir kisasondi [kisasondi at gmail dot com]
+
+
