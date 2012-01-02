@@ -1,6 +1,21 @@
 #!/usr/bin/python
 import  re
 import sys
+import urllib2
+
+
+
+def is_tor_exit(ip):
+    list = "http://torstatus.blutmagie.de/ip_list_exit.php/Tor_ip_list_EXIT.csv"
+    list = urllib2.urlopen(list).read()
+    list = list.split("\n")
+    print list
+    ip_tor_exit=False
+    for i in range(len(list)):
+        if list[i]==ip:
+            return True
+        
+        
 
 def readLogLine(pathToLog):
     f = open(pathToLog, 'r')
@@ -8,6 +23,7 @@ def readLogLine(pathToLog):
     for line in f:
         #print line
         row.append(re.findall('\[[^\]]*\]|\"[^\"]*\"|\S+', line))
+    f.close()
     return row
     #print line.split(" ")
     #print f.readline()
@@ -31,6 +47,7 @@ if __name__ == '__main__':
      elif len(sys.argv) == 2:
           logRows=readLogLine(sys.argv[1])
           print 'Lines:'+str(len(logRows))
+          print is_tor_exit('212.13.195.157')
           #printLines(logRows)
 
         
