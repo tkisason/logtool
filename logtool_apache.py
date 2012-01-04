@@ -1,12 +1,13 @@
 #!/usr/bin/python
 import  re
+import csv
 import sys
 import urllib2
 from compiler.syntax import check
 
 def tor_exit_nodes():
-    list_tor_exit_nodes = "http://torstatus.blutmagie.de/ip_list_exit.php/Tor_ip_list_EXIT.csv"
-    list_tor_exit_nodes = urllib2.urlopen(list_tor_exit_nodes).read()
+    tor_exit_nodes = "http://torstatus.blutmagie.de/ip_list_exit.php/Tor_ip_list_EXIT.csv"
+    list_tor_exit_nodes = urllib2.urlopen(tor_exit_nodes).read()
     list_tor_exit_nodes = list_tor_exit_nodes.split("\n")
     #print list
     return list_tor_exit_nodes
@@ -54,6 +55,25 @@ def printLines(logRows):
     for row in range(len(logRows)):
         print str(logRows[row][0]) + "\t" + str(logRows[row][3]) + "\t" + str(logRows[row][4]) + "\t" + str(logRows[row][5]) + "\t" + str(logRows[row][7]) + "\t" + str(logRows[row][8])
     
+def printUserAgents(logRows):
+    whitelist=['Mozilla/4.0','Opera','MSIE']
+    for row in range(len(logRows)):
+        print str(logRows[row][8]+"\n")
+
+def list_User_Agents():
+    #usage
+    #ua=list_User_Agents()
+    #ua[123][0]+ua[123][1]+ua[123][3]
+
+    
+    uaCvs='browscap.csv'
+    uaList=csv.reader(open(uaCvs,'rb'),delimiter=',',quotechar='|')
+    UA=[]
+    for row in uaList:
+        UA.append(row)
+        
+    return UA
+    
 
 if __name__ == '__main__':
      if len(sys.argv) != 2:
@@ -62,7 +82,8 @@ if __name__ == '__main__':
      elif len(sys.argv) == 2:
           logRows = readLogLine(sys.argv[1])
           print 'Lines:' + str(len(logRows))
-          check_tor_nodes(logRows)
+          #check_tor_nodes(logRows)
           #printLines(logRows)
-
+          #printUserAgents(logRows)
+          UAlist()
         
