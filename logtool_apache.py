@@ -33,11 +33,11 @@ def check_tor_nodes(logRows):
                  #todo:save in file
 
 def use_rest_ua_detect(strUA):
-    url_api="http://www.useragentstring.com/?uas="+strUA+"&getText=all"
-    print "debuh url_api: "+url_api
-    list=urllib2.urlopen(url_api).read()
-    print "debug list: "+list
-    list=list.split(";")
+    url_api = "http://www.useragentstring.com/?uas=" + strUA + "&getText=all"
+    print "debuh url_api: " + url_api
+    list = urllib2.urlopen(url_api).read()
+    print "debug list: " + list
+    list = list.split(";")
     
                
 
