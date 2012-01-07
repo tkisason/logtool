@@ -1,5 +1,6 @@
 .project
 .pydevproject
+.gitignore*
 *.pyc
 ua.log
 test*.py
