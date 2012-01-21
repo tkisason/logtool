@@ -26,8 +26,7 @@ def is_tor_exit(ip):
     for i in range(len(list)):
         if list[i] == ip:
             return True
-
-                
+              
 def check_tor_nodes(logRows):
     #check for tor exit nodes present in the log used for requesting data 
     list_tor = []
@@ -45,9 +44,7 @@ def check_tor_nodes(logRows):
                  print '\nMatch found writing to file ... \n'
                  out.write("%s\t%s\t%s\t%s\t%s\t%s\n" % (logRows[row][0], logRows[row][3], logRows[row][4], logRows[row][5], logRows[row][7], logRows[row][8]))
     out.close()    
-    
-
-
+   
 def readLogLine(pathToLog):
     f = open(pathToLog, 'r')
     row = []
@@ -92,6 +89,7 @@ def uas_parser(logRows=[]):
     out.close()
     
 #Distributions of User agent attributes based on formatted output given by the function uas_parser
+
 def dist_ua(ua_log):
     #finds known UA and return distribution as a dictionary
     list_log = listify_ua_log(ua_log)
@@ -107,6 +105,7 @@ def dist_ua(ua_log):
     counter = 0
     dist_browser = {}
     for i in range(len_browser):
+        counter=0
         for line in range(len_list):
             if str(unique_ua[i]) == str(list_log[line][1]):
                 counter = counter + 1
@@ -137,31 +136,33 @@ def dist_os(ua_log):
     counter = 0
     dist_os = {}
     for i in range(len_os):
+        counter=0
         for line in range(len_list):
             curr_os = str(list_log[line][2]).replace('\n', '')
             if str(unique_os[i]) == curr_os:
                 counter = counter + 1
                 dist_os[str(unique_os[i])] = counter
     return dist_os
-
+    
 def dist_weird_ua(ua_log):
     #find weird_ua
     list_log = listify_ua_log(ua_log)
     len_list = len(list_log)
     dist__weird_ua = {}
-    unique_weird_ua=[]
+    unique_weird_ua = []
     for line in range(len_list):
-        if str(list_log[line][2])=='unknown':
-            weird_ua=str(list_log[line][3]).replace('\n', '')
+        if str(list_log[line][2]) == 'unknown':
+            weird_ua = str(list_log[line][3]).replace('\n', '')
             if weird_ua not in unique_weird_ua:
                 unique_weird_ua.append(weird_ua)
     len_ua = len(unique_weird_ua)
     counter = 0
     dist_weird_ua = {}
     for i in range(len_ua):
+        counter=0
         for line in range(len_list):
-            if str(list_log[line][2])=='unknown':
-                curr_ua=str(list_log[line][3]).replace('\n', '')
+            if str(list_log[line][2]) == 'unknown':
+                curr_ua = str(list_log[line][3]).replace('\n', '')
             else:
                 continue
             if str(unique_weird_ua[i]) == curr_ua:
@@ -175,39 +176,73 @@ def plot_dist(dist={}):
 #            ("data5", 57), ( "data6", 39),
 #            ("data7", 23), ( "data8", 98)]
     N = len(dist)
-    x = np.arange(1, N+1)
+    x = np.arange(1, N + 1)
     y = dist.values()
     labels = dist.keys()
-    labs=tuple(labels)
-    xt=tuple(x)
-    width = np.arange(0,N)+0.5
-    bar1 = plt.bar(x, y,width,color='grywbcmr')
+    labs = tuple(labels)
+    xt = tuple(x)
+    width = np.arange(0, N) + 0.5
+    bar1 = plt.bar(x, y, width, color='grywbcmr')
     plt.legend(labs)
     plt.ylabel('Frequency')
     plt.show()
-  
+
+#Countries stuff  
+
 def geoip(strIP):
     ##using http://code.google.com/p/pygeoip/wiki/Usage
     gi = pygeoip.GeoIP('/home/amb/workspace/logtool/GeoIP.dat')
     country = gi.country_name_by_addr(strIP)
     return country
-   
+
+def export_countries_from_ua(logRows=[]):
+    countries = []
+    for line in range(len(logRows)):
+        country = geoip(str(logRows[line][0]))
+        countries.append(country)
+    unique_countries = uniquitze_list(countries)
+    countries_stats = {}
+    for cnt in range(len(unique_countries)):
+        counter=0
+        for row in range(len(countries)):
+            if  str(unique_countries[cnt]) == str(countries[row]):
+                counter = counter + 1
+                countries_stats[str(unique_countries[cnt])] = counter
+    return countries_stats
+ 
+def uniquitze_list(list=[]):
+    len_list = len(list)
+    unique_el_list = []
+    for i in range(len_list):
+        curr_el = str(list[i])
+        if curr_el not in unique_el_list:
+            unique_el_list.append(curr_el)
+    return unique_el_list
+          
+    
+#Detecting toolmarks of requests & times      
+
 def detect_attacks(logRows=[]):
-    xss_re='/((\%3C)|<)((\%2F)|\/)*W+((\%3E)|>)/ix'
-    inj_flaw='/(\')|(\%27)|(\-\-)|(#)|(\%23)/ix'
-    mal_file_exec='/(https?|php|data):/i'
-    dir_obj_reference='/(\.|(%|%25)2E)(\.|(%|%25)2E)(\/|(%|%25)2F|\\|(%|%25)5C)/i'
-    rfi='(\.\.\/)'
-    bad_req=[]
+    xss_re = '/((\%3C)|<)((\%2F)|\/)*W+((\%3E)|>)/ix'
+    inj_flaw = '/(\')|(\%27)|(\-\-)|(#)|(\%23)/ix'
+    mal_file_exec = '/(https?|php|data):/i'
+    dir_obj_reference = '/(\.|(%|%25)2E)(\.|(%|%25)2E)(\/|(%|%25)2F|\\|(%|%25)5C)/i'
+    rfi = '(\.\.\/)'
+    bad_req = []
     for row in range(len(logRows)):
-       curr_row=str(logRows[row][4])
-       if re.match(xss_re,curr_row) is not None:
+       curr_row = str(logRows[row][4])
+       if re.match(xss_re, curr_row) is not None:
            bad_req.append(curr_row)
-       if re.match('(\.\.\/)+',curr_row) is not None:
+       if re.match('(\.\.\/)+', curr_row) is not None:
            bad_req.append(curr_row)
     return bad_req
            
-    
+def export_dict_to_tab(fname='', dict={}):
+    now = str(date.strftime(datetime.now(), '%d%m%y%H%M'))
+    out = open(fname + now + '.tab', 'w')
+    for item in dict:
+        out.write(str(item)+'\t'+str(dict[item])+'\n')
+    out.close()   
               
 usage = """
         ----------------------------------------------------------------------
@@ -215,10 +250,10 @@ usage = """
             
         usage: logtool_apache.py [infile] 
         options:
-        1. check for tor nodes in log file
+        1. check for Tor nodes in log file
         2. Export user agents
-        3. Query Geoip for IP's country
-        4. Return unique browsers
+        3. Export countries distribution in a file 
+        4. Export known/unknown browsers and operating sys distribution in a file (requires option 2 first!)
         5. Find xss attempts
         6. Exit
         ----------------------------------------------------------------------
@@ -243,15 +278,21 @@ if __name__ == '__main__':
                   ua_list = uas_parser(logRows)
                   option = -1
              elif int(option) == 3:
-                  ip = raw_input('Enter IP:\t')
-                  c = geoip(str(ip))
-                  print c
+                  country_stats = {}
+                  country_stats = export_countries_from_ua(logRows)
+                  export_dict_to_tab('countries',country_stats)
+                  #print country_stats
                   option = -1
              elif int(option) == 4:
                  ua_log = raw_input('Name of log to parse:\t')
-                 lua = []
-                 lua = dist_ua(ua_log)
-                 plot_dist(lua)
+                 d = {}
+                 d = dist_ua(ua_log)
+                 export_dict_to_tab('knownUA', d)
+                 d=dist_weird_ua(ua_log)
+                 export_dict_to_tab('weirdUA', d)
+                 d=dist_os(ua_log)
+                 export_dict_to_tab('os', d)
+                 #plot_dist(lua)
                  option = -1
              elif int(option) == 5:
                 print detect_attacks(logRows)
