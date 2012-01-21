@@ -2,6 +2,8 @@
 .pydevproject
 .gitignore*
 *.pyc
-ua.log
+*.log
+*.csv
+*.txt
 test*.py
 cache
