@@ -1,0 +1,10 @@
+.project
+.pydevproject
+.gitignore*
+*.pyc
+*.log
+*.csv
+*.txt
+*.tab
+test*.py
+cache
